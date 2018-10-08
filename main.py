@@ -14,11 +14,16 @@ def index():
     template = jinja_env.get_template('form.html')
     return template.render()
 
-@app.route("/hello", methods=['POST'])
-def hello():
-    first_name = request.form['first_name']
+@app.route("/", methods=['POST'])
+def validate_form():
+    
+
+
+@app.route("/greeting", methods=['POST'])
+def greeting():
+    user_name = request.form['user_name']
     template = jinja_env.get_template('greeting.html')
-    return template.render(name=first_name)
+    return template.render(name=user_name)
 
 
 
