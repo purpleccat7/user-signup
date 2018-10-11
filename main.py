@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, render_template
 import cgi
 import os
 import jinja2
@@ -14,16 +14,49 @@ def index():
     template = jinja_env.get_template('form.html')
     return template.render()
 
+
 @app.route("/", methods=['POST'])
 def validate_form():
-    
+    username = request.form['username']
+    password = request.form['password']
+    verify = request.form['verify']
+    email = request.form['email']
+
+    username_error = ''
+    password_error = ''
+    verify_error = ''
+    email_error = ''
 
 
-@app.route("/greeting", methods=['POST'])
+    if len(username) < 3 or len(username) > 20 or " " in username:
+        username_error = "That's not a valid username"
+        username = ""
+
+    if len(password) < 3 or len(password) > 20 or " " in password:
+        password_error = "That's not a valid password"
+        password = ""
+
+    if verify != password:
+        verify_error = "Passwords are not the same"
+        verify = ""
+
+    if "@" and "." not in email:
+        email_error = "That's not a valid email"
+        email = ""
+
+    if username_error or password_error or verify_error or email_error:
+        template = jinja_env.get_template('form.html')
+        return template.render(username_error=username_error, password_error=password_error, verify_error=verify_error, email_error=email_error, username=username, password=password, verify=verify, email=email) 
+
+    else: 
+        return redirect('/greeting?username={}'.format(username))
+
+
+@app.route("/greeting", methods=['POST', 'GET'])
 def greeting():
-    user_name = request.form['user_name']
+    name = request.args.get('username')
     template = jinja_env.get_template('greeting.html')
-    return template.render(name=user_name)
+    return render_template(template, name=name)
 
 
 
